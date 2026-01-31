@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+@theme {
+  /* Neobrutalism Color Palette */
+  --color-bg: #FFF8E7;
+  --color-primary: #FFE600;
+  --color-secondary: #FF006E;
+  --color-cyan: #00F0FF;
+  --color-lime: #CCFF00;
+  --color-orange: #FF6B00;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+
+  /* Typography */
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Neobrutalism values */
+  --border-thick: 4px;
+  --shadow-offset: 6px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap');
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-black);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-black);
+}
+
+/* Neobrutalist utilities */
+.neo-border {
+  border: var(--border-thick) solid var(--color-black);
+}
+
+.neo-shadow {
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-black);
+}
+
+.neo-shadow-primary {
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-primary);
+}
+
+.neo-shadow-secondary {
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-secondary);
+}
+
+.neo-shadow-cyan {
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-cyan);
+}
+
+.neo-shadow-lime {
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-lime);
+}
+
+.neo-shadow-orange {
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-orange);
+}
+
+/* Tilt utilities */
+.tilt-left {
+  transform: rotate(-2deg);
+}
+
+.tilt-right {
+  transform: rotate(2deg);
+}
+
+.tilt-left-sm {
+  transform: rotate(-1deg);
+}
+
+.tilt-right-sm {
+  transform: rotate(1deg);
+}
+
+/* Custom scrollbar - neobrutalist style */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+  border-left: var(--border-thick) solid var(--color-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border: 2px solid var(--color-black);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+/* Magnetic button */
+.magnetic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Text reveal animation helper */
+.line-mask {
+  overflow: hidden;
+}
+
+.line-mask > * {
+  transform: translateY(100%);
+}
+
+/* Horizontal scroll section */
+.horizontal-scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+/* Hide scrollbar for touch scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Strikethrough animation */
+.strike-through {
+  position: relative;
+  display: inline-block;
+}
+
+.strike-through::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 6px;
+  background: var(--color-secondary);
+  transform: translateY(-50%) rotate(-1deg);
+}
+
+.strike-through.active::after {
+  width: 100%;
+  transition: width 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* Badge floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--rotation, 2deg)); }
+  50% { transform: translateY(-10px) rotate(var(--rotation, 2deg)); }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

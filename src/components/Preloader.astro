@@ -1,0 +1,124 @@
+---
+// Neobrutalist Preloader with bold animations
+---
+
+<div id="preloader" class="fixed inset-0 z-[10001] bg-bg flex items-center justify-center">
+  <div class="relative flex flex-col items-center">
+    <!-- Logo text -->
+    <div class="overflow-hidden">
+      <h1 id="preloader-text" class="font-sans text-6xl md:text-8xl font-bold tracking-tight translate-y-full">
+        CODEPUNK
+      </h1>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="mt-8 w-64 md:w-80 h-6 neo-border bg-white overflow-hidden">
+      <div id="preloader-progress" class="h-full bg-primary w-0"></div>
+    </div>
+
+    <!-- Counter -->
+    <div class="mt-4 overflow-hidden">
+      <span id="preloader-counter" class="font-mono text-2xl font-bold translate-y-full inline-block">000%</span>
+    </div>
+  </div>
+
+  <!-- Yellow cover for exit animation -->
+  <div id="preloader-cover" class="absolute inset-0 bg-primary translate-y-full"></div>
+</div>
+
+<script>
+  import gsap from "gsap";
+
+  const preloader = document.getElementById("preloader");
+  const preloaderText = document.getElementById("preloader-text");
+  const preloaderProgress = document.getElementById("preloader-progress");
+  const preloaderCounter = document.getElementById("preloader-counter");
+  const preloaderCover = document.getElementById("preloader-cover");
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (prefersReducedMotion) {
+    // Skip animation for reduced motion
+    if (preloader) preloader.style.display = "none";
+    document.dispatchEvent(new CustomEvent("preloaderComplete"));
+  } else {
+    // Create timeline
+    const tl = gsap.timeline();
+
+    // Animate text in with back.out easing
+    tl.to(preloaderText, {
+      y: 0,
+      duration: 0.8,
+      ease: "back.out(1.2)",
+      delay: 0.2,
+    })
+    .to(
+      preloaderCounter,
+      {
+        y: 0,
+        duration: 0.5,
+        ease: "power3.out",
+      },
+      "-=0.4"
+    );
+
+    // Animate progress bar
+    const progressTl = gsap.timeline({ delay: 0.6 });
+
+    progressTl.to(preloaderProgress, {
+      width: "100%",
+      duration: 1.2,
+      ease: "power2.inOut",
+      onUpdate: function () {
+        const progress = Math.round(this.progress() * 100);
+        if (preloaderCounter) {
+          preloaderCounter.textContent = `${progress.toString().padStart(3, '0')}%`;
+        }
+      },
+    });
+
+    // Exit animation
+    progressTl.to(
+      preloaderText,
+      {
+        y: "-120%",
+        duration: 0.5,
+        ease: "power3.in",
+      },
+      "+=0.2"
+    );
+
+    progressTl.to(
+      preloaderCounter,
+      {
+        y: "-120%",
+        duration: 0.4,
+        ease: "power3.in",
+      },
+      "-=0.4"
+    );
+
+    // Yellow cover slide up
+    progressTl.to(
+      preloaderCover,
+      {
+        y: 0,
+        duration: 0.6,
+        ease: "power3.inOut",
+      },
+      "-=0.2"
+    );
+
+    // Hide preloader
+    progressTl.to(preloader, {
+      y: "-100%",
+      duration: 0.6,
+      ease: "power3.inOut",
+      onComplete: () => {
+        if (preloader) preloader.style.display = "none";
+        document.dispatchEvent(new CustomEvent("preloaderComplete"));
+      },
+    });
+  }
+</script>

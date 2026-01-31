@@ -1,0 +1,137 @@
+---
+import "../styles/global.css";
+import Preloader from "../components/Preloader.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Custom-coded web experiences. Next.js, React, NestJS, WordPress. No page builders, no templates."
+} = Astro.props;
+
+const siteUrl = "https://codepunk.dev";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={siteUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={siteUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+
+    <title>{title}</title>
+
+    <!-- Schema.org -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "CODEPUNK",
+      "jobTitle": "Fullstack Web Developer",
+      "url": siteUrl,
+      "knowsAbout": ["Next.js", "React", "NestJS", "WordPress", "TypeScript"]
+    })} />
+  </head>
+  <body class="bg-bg text-black antialiased font-sans">
+    <Preloader />
+    <Header />
+
+    <main>
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import Lenis from "lenis";
+      import gsap from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (!prefersReducedMotion) {
+        // Initialize Lenis smooth scroll (only on desktop)
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        if (!isTouchDevice) {
+          const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: "vertical",
+            smoothWheel: true,
+          });
+
+          // Connect Lenis to GSAP ScrollTrigger
+          lenis.on("scroll", ScrollTrigger.update);
+
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+
+          gsap.ticker.lagSmoothing(0);
+
+          // Make lenis globally available
+          (window as any).lenis = lenis;
+        }
+      }
+
+      // Initialize magnetic buttons
+      function initMagneticButtons() {
+        const magneticElements = document.querySelectorAll(".magnetic");
+
+        magneticElements.forEach((el) => {
+          const element = el as HTMLElement;
+
+          element.addEventListener("mousemove", (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            gsap.to(element, {
+              x: x * 0.3,
+              y: y * 0.3,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          });
+
+          element.addEventListener("mouseleave", () => {
+            gsap.to(element, {
+              x: 0,
+              y: 0,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.3)"
+            });
+          });
+        });
+      }
+
+      // Initialize after preloader
+      document.addEventListener("preloaderComplete", () => {
+        initMagneticButtons();
+      });
+    </script>
+  </body>
+</html>

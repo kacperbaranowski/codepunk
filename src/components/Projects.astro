@@ -1,0 +1,205 @@
+---
+// Horizontal scroll projects section
+const projects = [
+  {
+    title: "E-COMMERCE PLATFORM",
+    description: "Next.js + Stripe + PostgreSQL",
+    color: "bg-primary",
+    year: "2024"
+  },
+  {
+    title: "SAAS DASHBOARD",
+    description: "React + NestJS + Charts",
+    color: "bg-cyan",
+    year: "2024"
+  },
+  {
+    title: "PORTFOLIO AGENCY",
+    description: "Astro + GSAP + Tailwind",
+    color: "bg-secondary",
+    year: "2023"
+  },
+  {
+    title: "BOOKING SYSTEM",
+    description: "Next.js + Prisma + Stripe",
+    color: "bg-lime",
+    year: "2023"
+  }
+];
+---
+
+<section id="projects" class="relative overflow-hidden">
+  <!-- Horizontal scroll wrapper - this gets pinned -->
+  <div id="horizontal-section" class="relative h-screen flex flex-col justify-center">
+    <!-- Header inside pinned area -->
+    <div class="absolute top-16 left-6 md:left-12 z-10">
+      <div class="overflow-hidden">
+        <p class="projects-line font-mono text-sm mb-2 translate-y-full">// SELECTED WORK</p>
+      </div>
+      <div class="overflow-hidden">
+        <h2 class="projects-line text-4xl md:text-5xl lg:text-6xl font-bold translate-y-full">
+          PROJECTS
+        </h2>
+      </div>
+    </div>
+
+    <div id="horizontal-scroll" class="flex gap-8 pl-6 md:pl-12 pt-24 will-change-transform">
+      {projects.map((project, i) => (
+        <article
+          class={`project-card flex-shrink-0 w-[80vw] md:w-[45vw] lg:w-[35vw] h-[55vh] neo-border neo-shadow ${project.color} p-8 md:p-10 group cursor-pointer flex flex-col`}
+          style={`transform: rotate(${i % 2 === 0 ? '-2' : '2'}deg)`}
+        >
+          <div class="flex items-start justify-between mb-8">
+            <span class="neo-border neo-shadow bg-white px-4 py-2 font-mono text-sm">{project.year}</span>
+            <span class="neo-border neo-shadow bg-white w-12 h-12 flex items-center justify-center font-bold">
+              0{i + 1}
+            </span>
+          </div>
+
+          <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 group-hover:text-white transition-colors">
+            {project.title}
+          </h3>
+
+          <p class="font-mono text-lg opacity-80">{project.description}</p>
+
+          <!-- Hover arrow -->
+          <div class="mt-auto pt-8 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span class="font-bold">VIEW PROJECT</span>
+            <span class="neo-border bg-white w-10 h-10 flex items-center justify-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </div>
+        </article>
+      ))}
+      <!-- Spacer at the end -->
+      <div class="flex-shrink-0 w-[20vw]"></div>
+    </div>
+
+    <!-- Progress bar - inside pinned area -->
+    <div class="absolute bottom-8 left-6 right-6 md:left-12 md:right-12">
+      <div class="flex items-center gap-6">
+        <span class="font-mono text-sm font-bold">01</span>
+        <div class="flex-1 h-2 neo-border bg-white relative overflow-hidden">
+          <div id="scroll-progress" class="absolute top-0 left-0 h-full bg-secondary w-0"></div>
+        </div>
+        <span class="font-mono text-sm font-bold">0{projects.length}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mobile fallback - horizontal touch scroll -->
+<section id="projects-mobile" class="md:hidden py-16 px-6 overflow-hidden">
+  <div class="mb-8">
+    <p class="font-mono text-sm mb-4">// SELECTED WORK</p>
+    <h2 class="text-4xl font-bold">PROJECTS</h2>
+  </div>
+
+  <div class="flex gap-6 overflow-x-auto scrollbar-hide pb-4 -mx-6 px-6">
+    {projects.map((project, i) => (
+      <article
+        class={`flex-shrink-0 w-[85vw] neo-border neo-shadow ${project.color} p-6 group cursor-pointer`}
+      >
+        <div class="flex items-start justify-between mb-6">
+          <span class="neo-border neo-shadow bg-white px-3 py-1 font-mono text-sm">{project.year}</span>
+          <span class="neo-border neo-shadow bg-white w-10 h-10 flex items-center justify-center font-bold text-sm">
+            0{i + 1}
+          </span>
+        </div>
+
+        <h3 class="text-2xl font-bold mb-3">{project.title}</h3>
+        <p class="font-mono text-base opacity-80">{project.description}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  #projects {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    #projects {
+      display: block;
+    }
+    #projects-mobile {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Only run horizontal scroll on desktop
+  const isDesktop = window.innerWidth >= 768;
+
+  if (isDesktop) {
+    // Header lines animation
+    gsap.to(".projects-line", {
+      y: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: "#projects",
+        start: "top 70%",
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    const horizontalSection = document.getElementById("horizontal-section");
+    const horizontalScroll = document.getElementById("horizontal-scroll");
+    const scrollProgress = document.getElementById("scroll-progress");
+
+    if (horizontalSection && horizontalScroll) {
+      // Calculate how far we need to scroll
+      const getScrollAmount = () => {
+        return horizontalScroll.scrollWidth - window.innerWidth + 100;
+      };
+
+      // Create the horizontal scroll animation
+      gsap.to(horizontalScroll, {
+        x: () => -getScrollAmount(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: horizontalSection,
+          start: "top top",
+          end: () => `+=${getScrollAmount()}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            if (scrollProgress) {
+              gsap.set(scrollProgress, { width: `${self.progress * 100}%` });
+            }
+          },
+        },
+      });
+
+      // Card reveal animation
+      gsap.fromTo(".project-card",
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.1,
+          duration: 0.6,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#projects",
+            start: "top 60%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+  }
+</script>
