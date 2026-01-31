@@ -61,9 +61,13 @@ const currentYear = new Date().getFullYear();
     </div>
 
     <!-- Copyright -->
-    <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+    <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-center items-center gap-4">
       <p class="font-mono text-sm text-gray-500">
         &copy; {currentYear} CODEPUNK. ALL RIGHTS RESERVED.
+      </p>
+      <span class="hidden md:inline text-gray-700">|</span>
+      <p class="font-mono text-sm text-gray-500">
+        Design & Development by <a href="https://kacperbaranowski.dev" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-white transition-colors">kacperbaranowski.dev</a>
       </p>
     </div>
   </div>
